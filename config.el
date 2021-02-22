@@ -56,3 +56,7 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+; examples of key bindings:
+; (map! :leader "rb" #'+eval/buffer) 
+; (map! "M-r" #'+eval/buffer)

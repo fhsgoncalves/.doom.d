@@ -7,6 +7,7 @@
 
 ;; format on save
 (add-hook 'before-save-hook 'lsp-format-buffer)
+(add-hook 'before-save-hook 'tide-format-before-save)
 
 (setq mac-command-modifier      'none
       ns-command-modifier       'none
@@ -42,5 +43,4 @@
 (setq sqlformat-command 'pgformatter)
 (setq sqlformat-args '("-s2" "-g"))
 (add-hook 'sql-mode-hook 'sqlformat-on-save-mode)
-
 

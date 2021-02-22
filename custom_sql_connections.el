@@ -63,7 +63,7 @@
   "Returns list of hosts with clients' section applied to all hosts."
   (let ((hosts nil)
         (global nil)
-        (fields '("user" "host" "database" "password" "port"))
+        (fields '("user" "host" "database" "dbname" "password" "port"))
         (section-parse (lambda(section)
                          (if (equal (car section) "client")
                              (setq global (filter-alist fields (cdr section)))
@@ -75,29 +75,61 @@
     (mapc section-parse (read-ini file-path))
     (mapcar merge-host-with-global hosts)))
 
-(defun dbconf-to-sql-connection (config)
-  (let ((parse-keys-and-values
-         (lambda (config)
-           (let ((head (car config))
-                 (tail (cdr config)))
-             (cons
-              head
-              (mapcar
-               (lambda (element)
-                (let ((key (car element))
-                      (value (cdr element)))
-                  (cond ((equal key "host") (list 'sql-server value))
-                        ((equal key "port") (list 'sql-port (string-to-number value)))
-                        ((equal key "user") (list 'sql-user value))
-                        ((equal key "password") (list 'sql-password value))
-                        ((equal key "database") (list 'sql-database value))
-                        ((equal key "product") (list 'sql-product value))
-                        (t (error (format "Unknown key %s" key))))))
-               tail))))))
-    (mapcar parse-keys-and-values config)))
+(defun mycnf-to-sql-connection (config product)
+  (let ((add-sql-product
+     (lambda (config)
+       (let ((head (car config))
+             (tail (cdr config)))
+         (cons head (append tail (list (list 'sql-product product)))))))
+    (parse-keys-and-values
+     (lambda (config)
+       (let ((head (car config))
+             (tail (cdr config)))
+         (cons
+          head
+          (mapcar
+           (lambda (element)
+            (let ((key (car element))
+                  (value (cdr element)))
+              (cond ((equal key "host") (list 'sql-server value))
+                    ((equal key "port") (list 'sql-port (string-to-number value)))
+                    ((equal key "user") (list 'sql-user value))
+                    ((equal key "password") (list 'sql-password value))
+                    ((equal key "database") (list 'sql-database value))
+                    (t (error (format "Unknown key %s" key))))))
+           tail))))))
+    (mapcar add-sql-product (mapcar parse-keys-and-values config))))
+
+(defun pgcnf-to-sql-connection (config product)
+  (let ((add-sql-product
+     (lambda (config)
+       (let ((head (car config))
+             (tail (cdr config)))
+         (cons head (append tail (list (list 'sql-product product)))))))
+    (parse-keys-and-values
+     (lambda (config)
+       (let ((head (car config))
+             (tail (cdr config)))
+         (cons
+          head
+          (mapcar
+           (lambda (element)
+            (let ((key (car element))
+                  (value (cdr element)))
+              (cond ((equal key "host") (list 'sql-server value))
+                    ((equal key "port") (list 'sql-port (string-to-number value)))
+                    ((equal key "user") (list 'sql-user value))
+                    ((equal key "password") (list 'sql-password value))
+                    ((equal key "dbname") (list 'sql-database (concat "service=" head)))
+                    (t (error (format "Unknown key %s" key))))))
+           tail))))))
+    (mapcar add-sql-product (mapcar parse-keys-and-values config))))
 
 ;;; Actually populating sql-connection-alist
 (setq sql-connection-alist
       (append
-       (dbconf-to-sql-connection (parse-dbconf-file "~/.dbconf"))))
+       (pgcnf-to-sql-connection (parse-dbconf-file "~/.pg_service.conf") ''postgres)
+       (mycnf-to-sql-connection (parse-dbconf-file "~/.my.cnf") ''mysql)))
+
+
 
