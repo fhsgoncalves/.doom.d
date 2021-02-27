@@ -68,3 +68,11 @@
 (map! "M-," #'lsp-find-references)
 
 (map! "M-;" #'comment-or-uncomment-region-or-line)
+
+(global-undo-tree-mode)
+
+;(setq helm-follow-mode-persistent t)
+
+;(setq helm-source-grep (helm-build-dummy-source "init_grep" :follow 1))
+;(add-hook 'helm-before-initialize-hook
+;          (lambda () (helm-attrset 'follow 1 helm-source-grep)))

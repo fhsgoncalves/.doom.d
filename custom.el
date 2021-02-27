@@ -20,33 +20,6 @@
 ;;  typescript
 ;;  ---------------------------
 
-;; relative import
-(eval-after-load "tide"
-  (lambda ()
-    (plist-put tide-user-preferences :importModuleSpecifierPreference "relative")
-    (plist-put tide-user-preferences :includeCompletionsForModuleExports t)
-    (plist-put tide-user-preferences :includeCompletionsWithInsertText t)
-    (plist-put tide-user-preferences :allowTextChangesInNewFiles t)))
-
-
-;;  ---------------------------
-;;  sql-mode
-;;  ---------------------------
-(add-hook 'sql-interactive-mode-hook
-          (lambda ()
-            (toggle-truncate-lines t)))
-(load-file "~/.doom.d/custom_sql_connections.el")
-
-;;  ---------------------------
-;;  sqlformat
-;;  ---------------------------
-(setq sqlformat-command 'pgformatter)
-(setq sqlformat-args '("-s2" "-g"))
-(add-hook 'sql-mode-hook 'sqlformat-on-save-mode)
-
-;;  ---------------------------
-;;  typescript
-;;  ---------------------------
 (defun lsp-js-ts-rename-file ()
   "Rename current file and all it's references in other files."
   (interactive)
@@ -73,6 +46,21 @@
       (setq-local lsp-buffer-uri nil)
       (lsp)
       (lsp--info "Renamed '%s' to '%s'." name (file-name-nondirectory new)))))
+
+;;  ---------------------------
+;;  sql-mode
+;;  ---------------------------
+(add-hook 'sql-interactive-mode-hook
+          (lambda ()
+            (toggle-truncate-lines t)))
+(load-file "~/.doom.d/custom_sql_connections.el")
+
+;;  ---------------------------
+;;  sqlformat
+;;  ---------------------------
+(setq sqlformat-command 'pgformatter)
+(setq sqlformat-args '("-s2" "-g"))
+(add-hook 'sql-mode-hook 'sqlformat-on-save-mode)
 
 ;;  ---------------------------
 ;;  comments
