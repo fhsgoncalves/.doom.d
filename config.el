@@ -69,10 +69,84 @@
 
 (map! "M-;" #'comment-or-uncomment-region-or-line)
 
-(global-undo-tree-mode)
+(map! :leader "wl" #'+workspace/load)
 
-;(setq helm-follow-mode-persistent t)
+;;  ---------------------------
+;;  term
+;;  ---------------------------
+(setq term-prompt-regexp "^[^#$%>\\n]*[#$%>] *")
 
-;(setq helm-source-grep (helm-build-dummy-source "init_grep" :follow 1))
-;(add-hook 'helm-before-initialize-hook
-;          (lambda () (helm-attrset 'follow 1 helm-source-grep)))
+;;  ---------------------------
+;;  autosave
+;;  ---------------------------
+(setq auto-save-default nil)
+
+
+;;  ---------------------------
+;;  lsp-ui
+;;  ---------------------------
+(setq lsp-ui-sideline-enable nil)
+
+;;  ---------------------------
+;;  lsp
+;;  ---------------------------
+(setq company-minimum-prefix-length 3)
+
+;;  ---------------------------
+;;  lsp eslint
+;;  ---------------------------
+(setq lsp-eslint-auto-fix-on-save nil)
+(setq lsp-eslint-quiet t)
+;(setq lsp-eslint-run "onSave")
+
+
+;;  ---------------------------
+;;  backward-forward
+;;  ---------------------------
+(backward-forward-mode t)
+
+;;  ---------------------------
+;;  typescript
+;;  ---------------------------
+(setq js-indent-level 2)
+(setq typescript-indent-level 2)
+
+;;  ---------------------------
+;;  hooks
+;;  ---------------------------
+(add-hook 'before-save-hook 'lsp-format-buffer)
+;;(add-hook 'before-save-hook 'lsp-eslint-apply-all-fixes)
+;;(add-hook 'before-save-hook 'lsp-format-buffer)
+
+;(add-hook 'before-save-hook 'tide-format-before-save)
+;(setq lsp-eslint-auto-fix-on-save t)
+
+
+;;  ---------------------------
+;;  key modifiers
+;;  ---------------------------
+(setq mac-command-modifier      'none
+      ns-command-modifier       'none
+      mac-option-modifier       'meta
+      ns-option-modifier        'meta
+      mac-right-option-modifier 'meta ;right option = left Window key on my external keyboard
+      ns-right-option-modifier  'meta)
+
+;;  ---------------------------
+;;  lsp - elixir
+;;  ---------------------------
+(use-package lsp-mode
+  :commands lsp
+  :ensure t
+  :diminish lsp-mode
+  :hook
+  (elixir-mode . lsp)
+  :init
+  (add-to-list 'exec-path "/Users/fernando.henrique/programs/elixir-ls"))
+
+;;  ---------------------------
+;;  vterm
+;;  ---------------------------
+(setq vterm-always-compile-module t)
+(setq vterm-max-scrollback 10000)
+(setq vterm-kill-buffer-on-exit t)
